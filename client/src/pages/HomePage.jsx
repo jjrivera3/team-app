@@ -130,7 +130,7 @@ const HomePage = () => {
         />
       </Box>
       <Box sx={{ marginTop: 2 }}>
-        <AddTeamButton onTeamAdded={onTeamAdded} />
+        <AddTeamButton />
       </Box>
     </Box>
   );

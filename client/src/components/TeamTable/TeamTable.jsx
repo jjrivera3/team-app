@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditTeamDialog from "./EditTeamDialog"; // Import Edit Modal
-import DeleteConfirmDialog from "./DeleteConfirmDialog"; // Import Delete Modal
+import EditTeamDialog from "../EditDialog/EditTeamDialog"; // Import Edit Modal
+import DeleteConfirmDialog from "../DeleteDialog/DeleteConfirmDialog"; // Import Delete Modal
 
 const TeamTable = ({ teams, onView, onDelete, onUpdate }) => {
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -93,6 +93,7 @@ const TeamTable = ({ teams, onView, onDelete, onUpdate }) => {
                   <IconButton
                     sx={{ color: "#ff9800", marginRight: 1, marginLeft: 1 }}
                     onClick={() => handleOpenEdit(team)}
+                    data-testid={`edit-team-button-${team.id}`}
                   >
                     <EditIcon />
                   </IconButton>
@@ -102,6 +103,7 @@ const TeamTable = ({ teams, onView, onDelete, onUpdate }) => {
                       setTeamToDelete(team.id);
                       setOpenConfirm(true);
                     }}
+                    data-testid={`delete-team-button-${team.id}`}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -119,6 +121,7 @@ const TeamTable = ({ teams, onView, onDelete, onUpdate }) => {
         editTeam={editTeam}
         setEditTeam={setEditTeam}
         onUpdate={onUpdate}
+        data-testid="edit-team-dialog"
       />
 
       {/* Delete Confirmation Dialog */}
@@ -127,6 +130,7 @@ const TeamTable = ({ teams, onView, onDelete, onUpdate }) => {
         handleClose={() => setOpenConfirm(false)}
         teamToDelete={teamToDelete}
         onDelete={onDelete}
+        data-testid="delete-confirm-dialog"
       />
     </>
   );

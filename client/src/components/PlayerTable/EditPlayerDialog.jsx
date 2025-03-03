@@ -58,7 +58,6 @@ const EditPlayerDialog = ({
         Edit Player
       </DialogTitle>
       <DialogContent>
-        {/* Player Name Input */}
         <TextField
           autoFocus
           margin="dense"

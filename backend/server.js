@@ -31,7 +31,6 @@ app.get("/teams", async (req, res) => {
     const teams = await prisma.team.findMany({
       orderBy: { createdAt: "asc" }, // Sorts teams by newest first
     });
-
     res.json(teams);
   } catch (error) {
     console.error("Error fetching teams:", error);

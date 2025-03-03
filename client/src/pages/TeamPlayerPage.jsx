@@ -71,6 +71,8 @@ const TeamPlayersPage = () => {
     gender: "",
   });
 
+  console.log(playerToEdit);
+
   const handleOpenConfirm = (playerId) => {
     setPlayerToDelete(playerId);
     setOpenConfirm(true);
@@ -155,7 +157,6 @@ const TeamPlayersPage = () => {
         {teamName} Roster
       </Typography>
 
-      {/* Render the PlayersTable component */}
       <PlayersTable
         players={players}
         onEdit={handleOpenEdit}
