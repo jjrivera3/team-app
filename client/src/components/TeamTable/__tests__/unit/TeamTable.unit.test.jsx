@@ -58,11 +58,15 @@ describe("TeamTable Component", () => {
     // Click the "Delete" button for the first team
     fireEvent.click(screen.getByTestId("delete-team-button-1"));
 
-    // Instead of waitFor, use findByTestId to directly find the dialog
-    const deleteDialog = await screen.findByTestId("delete-confirm-dialog");
+    // Use findByRole to query the dialog
+    const deleteDialog = await screen.findByRole("dialog");
 
-    // Assert that the Delete dialog is now in the document
+    // Alternatively, use findByText to find the dialog by its title
+    const dialogTitle = await screen.findByText("Confirm Delete");
+
+    // Assert that the Delete dialog and title are now in the document
     expect(deleteDialog).toBeInTheDocument();
+    expect(dialogTitle).toBeInTheDocument();
   });
 
   test("the edit team modal receives correct team data", async () => {
