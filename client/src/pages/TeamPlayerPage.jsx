@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
-import AddPlayerButton from "../components/AddPlayerButton";
-import DeletePlayerDialog from "../components/DeletePlayerDialog";
-import EditPlayerDialog from "../components/EditPlayerDialog";
-import PlayersTable from "../components/PlayersTable";
+import AddPlayerButton from "../components/PlayerTable/AddPlayerButton";
+import DeletePlayerDialog from "../components/PlayerTable/DeletePlayerDialog";
+import EditPlayerDialog from "../components/PlayerTable/EditPlayerDialog";
+import PlayersTable from "../components/PlayerTable/PlayersTable";
 import {
   fetchPlayers,
   addPlayer,

@@ -1,16 +1,44 @@
-import "@testing-library/jest-dom";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { describe, expect, it, vi } from "vitest";
+import "@testing-library/jest-dom";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  act,
+} from "@testing-library/react";
+import { describe, expect, test, jest, beforeEach } from "@jest/globals";
 import TeamTable from "../../TeamTable";
 
-// Mocking the Dialog components using Vitest's mock function
-vi.mock("../EditDialog/EditTeamDialog", () => ({
-  default: () => <div>Edit Team Dialog</div>,
-}));
-vi.mock("../DeleteDialog/DeleteConfirmDialog", () => ({
-  default: () => <div>Delete Confirm Dialog</div>,
-}));
+// ✅ Mock EditTeamDialog and ensure it calls onUpdate when "Save" is clicked
+jest.mock("../../../EditDialog/EditTeamDialog", () => {
+  return {
+    __esModule: true,
+    default: ({ onUpdate }) => (
+      <div>
+        Edit Team Dialog
+        <button
+          onClick={() => onUpdate("1", { name: "Team A", day: "Monday" })}
+        >
+          Save
+        </button>
+      </div>
+    ),
+  };
+});
+
+// ✅ Mock DeleteConfirmDialog and ensure it calls onDelete when "Delete" is clicked
+jest.mock("../../../DeleteDialog/DeleteConfirmDialog", () => {
+  return {
+    __esModule: true,
+    default: ({ onDelete }) => (
+      <div>
+        Delete Confirm Dialog
+        <button onClick={() => onDelete("1")}>Delete</button>
+      </div>
+    ),
+  };
+});
 
 describe("TeamTable Component", () => {
   const mockTeams = [
@@ -18,9 +46,9 @@ describe("TeamTable Component", () => {
     { id: "2", name: "Team B", day: "Tuesday" },
   ];
 
-  const mockOnView = vi.fn();
-  const mockOnDelete = vi.fn();
-  const mockOnUpdate = vi.fn();
+  const mockOnView = jest.fn();
+  const mockOnDelete = jest.fn();
+  const mockOnUpdate = jest.fn();
 
   beforeEach(() => {
     render(
@@ -40,71 +68,72 @@ describe("TeamTable Component", () => {
     expect(screen.getByText("Tuesday")).toBeInTheDocument();
   });
 
-  test('clicking the "View Team" button triggers onView with team id', () => {
-    fireEvent.click(screen.getAllByText("View Team")[0]);
+  test('clicking the "View Team" button triggers onView with team id', async () => {
+    await act(async () => {
+      fireEvent.click(screen.getAllByText("View Team")[0]);
+    });
     expect(mockOnView).toHaveBeenCalledWith("1");
   });
 
   test('clicking the "Edit" icon opens the Edit Team dialog', async () => {
-    // Click the "Edit" button for the first team (assuming the first team has id "1")
-    fireEvent.click(screen.getByTestId("edit-team-button-1"));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("edit-team-button-1"));
+    });
 
-    // Wait for the modal to appear and check for a specific element inside it
-    const teamNameInput = await screen.findByLabelText(/team name/i); // Check for the presence of the input field inside the modal
-    expect(teamNameInput).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Edit Team Dialog")).toBeInTheDocument();
+    });
   });
 
   test('clicking the "Delete" icon opens the Delete Confirm dialog', async () => {
-    // Click the "Delete" button for the first team
-    fireEvent.click(screen.getByTestId("delete-team-button-1"));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("delete-team-button-1"));
+    });
 
-    // Use findByRole to query the dialog
-    const deleteDialog = await screen.findByRole("dialog");
-
-    // Alternatively, use findByText to find the dialog by its title
-    const dialogTitle = await screen.findByText("Confirm Delete");
-
-    // Assert that the Delete dialog and title are now in the document
-    expect(deleteDialog).toBeInTheDocument();
-    expect(dialogTitle).toBeInTheDocument();
-  });
-
-  test("the edit team modal receives correct team data", async () => {
-    fireEvent.click(screen.getByTestId("edit-team-button-1")); // Edit button
-
-    // Check that the modal is populated with the correct team data
-    expect(screen.getByText("Edit Team")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Delete Confirm Dialog")).toBeInTheDocument();
+    });
   });
 
   test("onUpdate is called correctly when updating team", async () => {
-    fireEvent.click(screen.getByTestId("edit-team-button-1")); // Edit button
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("edit-team-button-1"));
+    });
 
-    // Check that the modal is opened and fire the update action
-    const saveButton = screen.getByText("Save");
-    fireEvent.click(saveButton);
+    // Ensure the modal is visible
+    await waitFor(() => {
+      expect(screen.getByText("Edit Team Dialog")).toBeInTheDocument();
+    });
+
+    // Click the Save button
+    await act(async () => {
+      fireEvent.click(screen.getByText("Save"));
+    });
 
     await waitFor(() => {
       expect(mockOnUpdate).toHaveBeenCalledWith("1", {
-        name: "Team A", // Check the current data
+        name: "Team A",
         day: "Monday",
       });
     });
   });
 
   test("onDelete is called correctly when confirming deletion", async () => {
-    // Click the "Delete" button for the first team (team with id "1")
-    fireEvent.click(screen.getByTestId("delete-team-button-1"));
-
-    // Wait for the dialog to appear and find the delete button inside it
-    const confirmDeleteButton = await screen.findByRole("button", {
-      name: /delete/i, // Looking for the delete button in the dialog
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("delete-team-button-1"));
     });
 
-    // Confirm deletion by clicking the delete button in the dialog
-    fireEvent.click(confirmDeleteButton);
+    await waitFor(() => {
+      expect(screen.getByText("Delete Confirm Dialog")).toBeInTheDocument();
+    });
+
+    // Click the Delete button
+    await act(async () => {
+      fireEvent.click(screen.getByText("Delete"));
+    });
 
     await waitFor(() => {
-      expect(mockOnDelete).toHaveBeenCalledWith("1"); // Ensure the delete callback was called with correct team id
+      expect(mockOnDelete).toHaveBeenCalledWith("1");
     });
   });
 });

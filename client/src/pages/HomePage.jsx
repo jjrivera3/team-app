@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Box, Typography, Paper, CircularProgress } from "@mui/material";
-import TeamTable from "../components/TeamTable";
-import AddTeamButton from "../components/AddTeamButton";
+import TeamTable from "../components/TeamTable/TeamTable";
+import AddTeamButton from "../components/TeamTable/AddTeamButton";
 import { fetchTeams, addTeam, updateTeam, deleteTeam } from "../api/teams";
 
 const HomePage = () => {
