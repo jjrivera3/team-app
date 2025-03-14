@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -16,7 +16,7 @@ const AddTeamButton = ({ onTeamAdded }) => {
   const HOST = "http://localhost:3001";
   const [open, setOpen] = useState(false);
   const [newTeamName, setNewTeamName] = useState("");
-  const [newTeamDay, setNewTeamDay] = useState(""); // state for Day
+  const [newTeamDay, setNewTeamDay] = useState("");
 
   const queryClient = useQueryClient();
 
